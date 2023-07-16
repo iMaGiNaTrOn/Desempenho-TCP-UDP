@@ -52,12 +52,12 @@ def main():
             
             # Obtém o tamanho do arquivo
             file_size = os.path.getsize(filename)
-            print(file_size, end="\n\n")
+            # print(file_size, end="\n\n")
             # Envia o tamanho do arquivo para o servidor
             client_socket.send(str(file_size).encode())
             
             teste = client_socket.recv(1024).decode()
-            print(teste)
+            # print(teste)
             
             # Chama a função para enviar o arquivo
             send_file(client_socket, filename, packet_size)
