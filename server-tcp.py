@@ -8,7 +8,7 @@ def receive_file(client_socket, filename, packet_size, file_size):
     # Abrindo arquivo, e não existir, o cria
     file = open(filename, 'wb')
     
-    print(math.ceil(file_size/packet_size))
+    # print(math.ceil(file_size/packet_size))
     
     # Começa contador de tempo de execução da comunicação
     start = time.time()
