@@ -8,11 +8,18 @@ def receive_file(client_socket, filename, packet_size, file_size):
     # Abrindo arquivo, e não existir, o cria
     file = open(filename, 'wb')
     
+    print(math.ceil(file_size/packet_size))
+    
     # Começa contador de tempo de execução da comunicação
     start = time.time()
+    
     while i < math.ceil(file_size/packet_size):
         # Recebe e escreve os dados, a partir do tamanho de packet_size
         data = client_socket.recv(packet_size)
+        
+        if not data:
+            break
+        
         file.write(data)
         
         # Print de debug
@@ -20,6 +27,9 @@ def receive_file(client_socket, filename, packet_size, file_size):
         i+=1
     end = time.time()
     file.close()
+    
+    # data = client_socket.recv(1024)
+    # print(data)
     
     # Printando no servidor
     print('Arquivo', filename, 'recebido com sucesso com', i, 'pacotes.')
