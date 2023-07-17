@@ -1,5 +1,6 @@
 import socket
 import os
+import math
 
 def send_file(client_socket, filename, packet_size):
     print(filename)
@@ -8,12 +9,13 @@ def send_file(client_socket, filename, packet_size):
     while True:
         data = file.read(packet_size)
         if not data: 
+            print('Entrei no if de parada.')
             break
         client_socket.send(data)
         # print("pacote", i)
         i += 1
-    print("Enviando pacote vazio")
-    client_socket.send(b'')
+    # print("Enviando pacote vazio")
+    # client_socket.send(b'')
     print('Arquivo', filename, 'enviado com sucesso.')
     file.close()
 
@@ -52,13 +54,13 @@ def main():
             
             # Obtém o tamanho do arquivo
             file_size = os.path.getsize(filename)
-            # print(file_size, end="\n\n")
-            # Envia o tamanho do arquivo para o servidor
-            client_socket.send(str(file_size).encode())
             
-            teste = client_socket.recv(1024).decode()
-            # print(teste)
+            # Obtém a quantidade de pacotes máximo no arquivo, com base no tamanho escolhido
+            total_packets = math.ceil(file_size/packet_size)
+            print(total_packets)
+            client_socket.send(str(total_packets).encode())
             
+            sync = client_socket.recv(1024)
             # Chama a função para enviar o arquivo
             send_file(client_socket, filename, packet_size)
         
