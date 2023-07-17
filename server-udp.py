@@ -15,8 +15,8 @@ def receive_file(client_socket, filename, packet_size):
             break
         file.write(data)
         
-        if i%1000 == 0:
-            print("pacote", i)
+        #if i%1000 == 0:
+        #    print("pacote", i)
         i+=1
         
     end = time.time()

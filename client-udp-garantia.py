@@ -12,8 +12,7 @@ def send_file(client_socket, filename, packet_size, host, port):
             #Esperando a confirmação de recebimento do server
             try:
                 client_socket.settimeout(1) # Define um timeout de 1 segundo para receber
-                confirmacao, _ = client_socket.recvfrom(1024)
-                client_socket.settimeout(None)
+                _, _ = client_socket.recvfrom(1024)
             except socket.timeout:
                 print('Timeout: Pacote não recebido, retransmitindo...')
                 continue

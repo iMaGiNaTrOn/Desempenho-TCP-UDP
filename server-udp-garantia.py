@@ -9,7 +9,7 @@ def receive_file(client_socket, filename, packet_size):
     while True:
         # Recebendo os valores do cliente
         data, address = client_socket.recvfrom(packet_size)
-        
+        client_socket.sendto(b'Recebido', address)
         # Condição de parada
         if not data:
             break
@@ -17,7 +17,7 @@ def receive_file(client_socket, filename, packet_size):
         # print("pacote", i)
         i+=1
         # Mensagem que indicia o recebimento do pacote
-        client_socket.sendto(b'Recebido', address)
+        
     end = time.time()
     file.close()
     print('Arquivo', filename, ', vindo de', address[0], 'recebido com sucesso com', i, 'pacotes.')
@@ -42,7 +42,7 @@ def main():
             if data == 'enviar':
                 # Recebe o nome do arquivo
                 filename, address = server_socket.recvfrom(1024)
-                filename = filename.decode()
+                filename = 'saida_' + filename.decode()
                 
                 # Recebe o tamanho do arquivo
                 packet_size, address = server_socket.recvfrom(1024)

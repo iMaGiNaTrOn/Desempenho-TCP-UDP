@@ -33,28 +33,38 @@ def tcp():
             filename = client_socket.recv(1024).decode()
             # Recebe o tamanho do pacote
             packet_size = int(client_socket.recv(1024).decode())
-            # Recebe a quantidade total de pacotes
-            total_packets = int(client_socket.recv(1024).decode())
             
-            sync = b'sync'
-            client_socket.send(sync)
+            while True:
+                # Recebe o tamanho do arquivo
+                file_size = int(client_socket.recv(1024).decode())
+                
             
+                client_socket.send(str(file_size).encode())
+                sync = client_socket.recv(1024)
+                if sync == b'OK':
+                    break
+                else:
+                    continue
+            
+            print('Tamanho do arquivo:', file_size)
             i = 0
     
             # Começa contador de tempo de execução da comunicação
             start = time.time()
             
             with open(filename, 'wb') as file:
-                while i < total_packets:
+                while i < file_size:
                     # Recebe e escreve os dados, a partir do tamanho de packet_size
                     data = client_socket.recv(packet_size)
                     # print(data)
-                        
                     file.write(data)
                         
                     # Print de debug
-                    #print("pacote", i)
-                    i+=1
+                    if len(data) != packet_size:
+                        i += len(data)
+                    else:
+                        i += packet_size
+                    
             end = time.time()
             
             # Printando no servidor

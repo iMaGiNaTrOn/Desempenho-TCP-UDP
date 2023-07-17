@@ -14,8 +14,10 @@ def send_file(client_socket, filename, packet_size, host, port):
     print('Arquivo', filename, 'enviado com sucesso.')
 
 def main():
-    host = '192.168.0.10'  # Endereço IP do servidor
+    host = '192.168.100.111'  # Endereço IP do servidor
     port = 12345  # Porta usada pelo servidor
+    
+    print(host, port)
 
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
