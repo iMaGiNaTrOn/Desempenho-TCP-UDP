@@ -2,39 +2,6 @@ import socket
 import time
 import math
 
-def receive_file(client_socket, filename, packet_size, file_size):
-    # Contador de pacotes
-    i = 0
-    # Abrindo arquivo, e não existir, o cria
-    file = open(filename, 'wb')
-    
-    # print(math.ceil(file_size/packet_size))
-    
-    # Começa contador de tempo de execução da comunicação
-    start = time.time()
-    
-    while i < math.ceil(file_size/packet_size):
-        # Recebe e escreve os dados, a partir do tamanho de packet_size
-        data = client_socket.recv(packet_size)
-        
-        if not data:
-            break
-        
-        file.write(data)
-        
-        # Print de debug
-        # print("pacote", i)
-        i+=1
-    end = time.time()
-    file.close()
-    
-    # data = client_socket.recv(1024)
-    # print(data)
-    
-    # Printando no servidor
-    print('Arquivo', filename, 'recebido com sucesso com', i, 'pacotes.')
-    print('Tomou tempo de', end-start)
-
 def tcp():
     # Configurar o endereço do servidor
     host = socket.gethostname()  # Endereço IP do servidor
@@ -66,20 +33,33 @@ def tcp():
             filename = client_socket.recv(1024).decode()
             # Recebe o tamanho do pacote
             packet_size = int(client_socket.recv(1024).decode())
+            # Recebe a quantidade total de pacotes
+            total_packets = int(client_socket.recv(1024).decode())
             
-            # Recebe o tamanho do arquivo
-            file_size = client_socket.recv(1024).decode()
-            print(file_size)
+            sync = b'sync'
+            client_socket.send(sync)
             
-            # Função de sincronização
-            # Sem isso, ele estava enviando tanto o tamanho do pacote quanto outras informações pela parte do cliente
-            # Então eu fiz um pedido de espera, para que as cosias começassem adequadamente
-            sync = "yes"
-            client_socket.send(sync.encode())
-            file_size = int(file_size)
+            i = 0
+    
+            # Começa contador de tempo de execução da comunicação
+            start = time.time()
             
-            # Chama função para receber o arquivo
-            receive_file(client_socket, filename, packet_size, file_size)
+            with open(filename, 'wb') as file:
+                while i < total_packets:
+                    # Recebe e escreve os dados, a partir do tamanho de packet_size
+                    data = client_socket.recv(packet_size)
+                    # print(data)
+                        
+                    file.write(data)
+                        
+                    # Print de debug
+                    #print("pacote", i)
+                    i+=1
+            end = time.time()
+            
+            # Printando no servidor
+            print('Arquivo', filename, 'recebido com sucesso com', i, 'pacotes.')
+            print('Tomou tempo de', end-start)
             
             data = 'Pacote recebido com sucesso'
         else:
